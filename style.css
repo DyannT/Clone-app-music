@@ -91,6 +91,8 @@
     color: #666;
     padding: 18px;
     font-size: 18px;
+    cursor: pointer;
+
   }
   
   .control .btn.active {
@@ -188,3 +190,6 @@
     font-size: 18px;
   }
   
+  .repeat.active{
+    color: red;
+  }

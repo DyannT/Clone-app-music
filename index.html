@@ -31,7 +31,7 @@
 
       <!-- Control -->
       <div class="control">
-        <div class="btn btn-repeat">
+        <div class="btn btn-repeat ">
           <i class="fas fa-redo"></i>
         </div>
         <div class="btn btn-prev">
@@ -69,11 +69,12 @@
     const playBtn = $('.btn-toggle-play')
     const player = $('.player')
     const progress = $('#progress')
-
+    const repeat = $('.btn-repeat')
 
     const app = {
       currentIndex: 0,
       isPlaying: false,
+      isRepeat: false,
       songs: [
         {
           name: 'Song1',
@@ -162,6 +163,7 @@
         })
       },
       handleEvents: function () {
+        var i = 1;
         const _this = this;
         const cdWidth = cd.offsetWidth
 
@@ -218,7 +220,6 @@
               _this.isPlaying = false;
               audio.pause();
               player.classList.remove("playing")
-              cdThumbAnimate.pause();
             }
           }
         }
@@ -227,22 +228,73 @@
           const seekTime = audio.duration / 100 * e.target.value;
           audio.currentTime = seekTime;
         }
+
+        // Xu li su kien repeat
+        repeat.onclick = function () {
+          // console.log(_this.isRepeat)
+            if(_this.isRepeat){
+              repeat.classList.remove("active")
+              _this.isRepeat = false;
+              // Xu ly su kien khi ket thuc bai hat
+                audio.addEventListener('ended',function(){
+                  // Neu con repeat active o bai hat thu i thi sẽ vẫn chạy bài đó
+                  if(_this.isRepeat){
+                    heading.textContent = `Song${i}`;
+                    cdThumb.style.backgroundImage = `url('./img/img${i}.jpg')`
+                    audio.src = `./music/song${i}.mp3`;
+                    player.classList.add("playing")
+                    audio.play();
+                    cdThumbAnimate.play();
+                  }  
+                  // Còn không sẽ next bài khác
+                  else{
+                    heading.textContent = `Song${i+1}`;
+                    cdThumb.style.backgroundImage = `url('./img/img${i+1}.jpg')`
+                    audio.src = `./music/song${i+1}.mp3`;
+                    player.classList.add("playing")
+                    audio.play();
+                    cdThumbAnimate.play();
+                    i+=1;
+                  }      
+                }, false);
+            }
+            else{
+              repeat.classList.add("active")
+              _this.isRepeat = true;
+              audio.addEventListener('ended', function() {
+                audio.currentTime = 0;
+                audio.play();
+                cdThumbAnimate.play();
+                player.classList.add("playing")
+              }, false);
+            }
+        }
+
+        // Xu ly su kien khi ket thuc bai hat
+        //   audio.addEventListener('ended',function(){
+        //             heading.textContent = `Song${i+1}`;
+        //             cdThumb.style.backgroundImage = `url('./img/img${i+1}.jpg')`
+        //             audio.src = `./music/song${i+1}.mp3`;
+        //             player.classList.add("playing")
+        //             audio.play();
+        //             cdThumbAnimate.play();
+        //             i+=1;
+        // }
       },
       loadCurrentSong: function () {
         heading.textContent = this.currentSong.name;
         cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
         audio.src = this.currentSong.path;
-
       },
       start: function () {
         // Định nghĩa các thuộc tính cho object
         this.defineProperties();
-
-        // Lắng nghe và xử lý các sk
-        this.handleEvents();
-
+ 
         // TẢi thông tin bài đầu tiên vào UI khi chạy ứng dụng
         this.loadCurrentSong();
+        
+        // Lắng nghe và xử lý các sk
+        this.handleEvents();
 
         //Render playlist
         this.render();
