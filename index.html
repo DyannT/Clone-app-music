@@ -73,8 +73,8 @@
     const nextBtn = $('.btn-next')
     const preBtn = $('.btn-prev')
     const randomBtn = $('.btn-random')
-
-
+    
+    const listSong = $$('.song')
 
     const app = {
       currentIndex: 0,
@@ -144,7 +144,7 @@
         },
       ],
       render: function () {
-        const htmls = this.songs.map((song) => {
+        const htmls = this.songs.map((song,index) => {
           return `
               <div class="song">
                   <div class="thumb" style="background-image: url(${song.image})">
@@ -172,6 +172,7 @@
         var i = 1;
         const _this = this;
         const cdWidth = cd.offsetWidth
+        var storageNum;
 
         // Xử lý  CD quay & dừng
         const cdThumbAnimate = cdThumb.animate([
@@ -325,28 +326,55 @@
 
         // Xử lý sự kiện random Song with
         randomBtn.onclick = function(){
-          // var checkRandom = Math.floor(Math.random()*10)
-          // if(checkRandom > 1){
-          //   var randomNum = checkRandom;
-          // }
-          // else{
-          //   randomNum = 1
-          // }
-          console.log(randomNum)
-          if(_this.isRandom && !_this.repeat){
-            randomBtn.classList.add("active")
+          // Random 2-9(Bai hat)
+          if(_this.isRandom){
+            // Lay gtri random number khi khong con random nx va gan vao i
+            i = storageNum;
+            randomBtn.classList.remove("active")
+            _this.isRandom = false;
+            // Neu khong co random
             audio.addEventListener('ended', function () {
-              heading.textContent = `Song${randomNum}`;
-              cdThumb.style.backgroundImage = `url('./img/img${randomNum}.jpg')`
-              audio.src = `./music/song${randomNum}.mp3`;
-              _this.isPlaying = true;
-              player.classList.add("playing")
-              audio.play();
-              cdThumbAnimate.play();
-            },false);
+            if(i <= 9){
+              // Chay bai tiep theo khi khong con random
+              heading.textContent = `Song${i}`;
+                cdThumb.style.backgroundImage = `url('./img/img${i}.jpg')`
+                audio.src = `./music/song${i}.mp3`;
+                _this.isPlaying = true;
+                player.classList.add("playing")
+                audio.play();
+                cdThumbAnimate.play();
+            }        
+            else{
+              cdThumbAnimate.pause();
+              _this.isPlaying = false;
+              audio.pause();
+              player.classList.remove("playing")}
+            }, false);
           }
-          else{}
+          else{
+            randomBtn.classList.add("active");
+            _this.isRandom = true;
+            // Neu co random
+            audio.addEventListener('ended', function () {
+              // Dat 1 so random
+                var randomNum1 = Math.floor(Math.random() * (9 - 2 + 1) + 2)
+                // Gan no vao a neu khong con random
+                storageNum = randomNum1
+                // Gan vao
+                heading.textContent = `Song${randomNum1}`;
+                cdThumb.style.backgroundImage = `url('./img/img${randomNum1}.jpg')`
+                audio.src = `./music/song${randomNum1}.mp3`;
+                _this.isPlaying = true;
+                player.classList.add("playing")
+                audio.play();
+                cdThumbAnimate.play();
+              },false);
+              
+          }
         }
+
+        // Pick Song
+        
 
         },
       loadCurrentSong: function () {
