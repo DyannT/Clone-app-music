@@ -349,6 +349,7 @@
         audio.addEventListener('ended', function () {
           if (!_this.isRepeat && !_this.isRandom) {
             if (i <= 9) {
+              console.log(i)
               heading.textContent = `Song${i + 1}`;
               cdThumb.style.backgroundImage = `url('./img/img${i + 1}.jpg')`
               audio.src = `./music/song${i + 1}.mp3`;
@@ -357,9 +358,37 @@
               audio.play();
               cdThumbAnimate.play();
               i += 1;
+              console.log(i)
               $(`.song${[i - 1]}`).classList.remove("active");
               $(`.song${[i]}`).classList.add("active");
-              console.log(i)
+            }
+            else {
+              cdThumbAnimate.pause();
+              _this.isPlaying = false;
+              audio.pause();
+              player.classList.remove("playing")
+            }
+          }
+        }, false);
+        
+        
+        
+        
+        audio.addEventListener('ended', function () {
+          if (!_this.isRepeat && _this.isRandom && storageNum!== undefined) {
+            if (i <= 9 ) {
+              heading.textContent = `Song${storageNum}`;
+              cdThumb.style.backgroundImage = `url('./img/img${storageNum}.jpg')`
+              audio.src = `./music/song${storageNum}.mp3`;
+              _this.isPlaying = true;
+              player.classList.add("playing")
+              audio.play();
+              cdThumbAnimate.play();
+              // $(`.song${[i - 2]}`).classList.remove("active");
+              $(`.song${[i - 1]}`).classList.remove("active");
+              $(`.song${[i]}`).classList.remove("active");
+              $(`.song${[storageNum]}`).classList.add("active");
+              i = storageNum
             }
             else {
               cdThumbAnimate.pause();
@@ -370,12 +399,15 @@
           }
         }, false);
 
+
         // Xu ly su kien next song
         nextBtn.onclick = function (e) {
           // Neu storageNum co duoc gán random ở phía dưới thì chạy if(tương đương bài hát đc random) và không còn được bận random nx
+          // console.log(storageNum)
           if(storageNum !== undefined && !_this.isRandom){
             // Check nếu số lớn hơn 9 sẽ k next đc tiếp
             if(storageNum <= 9){
+              console.log(storageNum)
               heading.textContent = `Song${storageNum + 1}`;
               cdThumb.style.backgroundImage = `url('./img/img${storageNum + 1}.jpg')`
               audio.src = `./music/song${storageNum + 1}.mp3`;
@@ -400,26 +432,26 @@
           }
 
           // Bấm random và next ở lúc đầu sau đấy tắt random va ấn next
-          else if(!_this.isRandom && storge2 !== undefined){
+          else if(!_this.isRandom && storge1 !== undefined){
             // Check nếu số lớn hơn 9 sẽ k next đc tiếp
-            if(storge2 <= 9){
-              heading.textContent = `Song${storge2 + 1}`;
-              cdThumb.style.backgroundImage = `url('./img/img${storge2 + 1}.jpg')`
-              audio.src = `./music/song${storge2 + 1}.mp3`;
+            if(storge1 <= 9){
+              heading.textContent = `Song${storge1 + 1}`;
+              cdThumb.style.backgroundImage = `url('./img/img${storge1 + 1}.jpg')`
+              audio.src = `./music/song${storge1 + 1}.mp3`;
               player.classList.add("playing")
               audio.play();
               cdThumbAnimate.play();
-              storge2 += 1;
-              $(`.song${[storge2-1]}`).classList.remove("active");
-              $(`.song${[storge2]}`).classList.add("active");
+              storge1 += 1;
+              $(`.song${[storge1-1]}`).classList.remove("active");
+              $(`.song${[storge1]}`).classList.add("active");
               //lưu giá trị sau khi random và next 
-              saveBeforeNext1 = storge2
+              saveBeforeNext1 = storge1
             }
             // Không sẽ tua lại bài cuối mỗi lần ấn
             else{
-              heading.textContent = `Song${storge2}`;
-              cdThumb.style.backgroundImage = `url('./img/img${storge2}.jpg')`
-              audio.src = `./music/song${storge2}.mp3`;
+              heading.textContent = `Song${storge1}`;
+              cdThumb.style.backgroundImage = `url('./img/img${storge1}.jpg')`
+              audio.src = `./music/song${storge1}.mp3`;
               player.classList.add("playing")
               audio.play();
               cdThumbAnimate.play();
@@ -436,22 +468,43 @@
             player.classList.add("playing")
             audio.play();
             cdThumbAnimate.play();
-            storge2 = randomNumNext1
-            if(count === 1){
-              console.log('ok2')
+            storge1 = randomNumNext1
+            storageNum = randomNumNext1
+            if(count <= 1){
+              //Xóa khi lần đầu ấn next thường và sau đó ấn next random
+              $(`.song${[i]}`).classList.remove("active");
+              // Ấn random và next ở đầu sau đấy ấn tắt và next sau đó lại bật random và next ở random
+              $(`.song${[storageNum]}`).classList.remove("active");
+              // Xóa phần tử đầu tiên khi ngay lần đầu bấm random(ptu 1)
               $(`.song${[count]}`).classList.remove("active");
+              // 
+              $(`.song${[storge2]}`).classList.remove("active");
+              // Thêm active cho class tiếp theo
               $(`.song${[randomNumNext1]}`).classList.add("active");
+              console.log(randomNumNext1)
               storge1 = randomNumNext1
             }
             else{
+              //Xóa khi lần đầu ấn next thường và sau đó ấn next random
+              $(`.song${[i]}`).classList.remove("active");
+              // Ấn random và next ở đầu sau đấy ấn tắt và next sau đó lại bật random và next ở random
+              $(`.song${[storageNum]}`).classList.remove("active");
+              // 
+              $(`.song${[saveBeforeNext1]}`).classList.remove("active");
+              // Xóa active hiện tại
               $(`.song${[storge1]}`).classList.remove("active");
+              console.log(storge1)
+              // 
+              console.log(storge1)
+              $(`.song${[storge2]}`).classList.remove("active");
+              // Thêm số mới
               $(`.song${[randomNumNext1]}`).classList.add("active");
               storge1 = randomNumNext1
             }
           }
 
           
-          // Neu storageNum co duoc gán random ở phía dưới thì chạy if(tương đương bài hát đc random) và còn được bận random nx ấn next sẽ random các bài hát
+          // // Neu storageNum co duoc gán random ở phía dưới thì chạy if(tương đương bài hát đc random) và còn được bật random nx ấn next sẽ random các bài hát
           else if(storageNum !== undefined && _this.isRandom){
             // Cộng biến next lên 1
             checkNextRan += 1
@@ -463,12 +516,13 @@
             player.classList.add("playing")
             audio.play();
             cdThumbAnimate.play();
-            console.log('ok')
             // Lưu nó lại vào storageNum(nếu trong trường hợp tắt random sẽ nhảy lên phía trên và next khi không có random)
             storageNum = randomNumNext
+            
             // Check TH đầu tiên(bởi vì ở dưới lưu storgeRemove là giá trị cuối cùng đến cuối bài random nên nếu mà ấn next thì sẽ xóa active ở biến storgeRemove đi)
             if(checkNextRan <= 1){
-              // console.log(storgeRemove)
+              console.log('ok')
+              console.log(storgeRemove)
               $(`.song${[storgeRemove]}`).classList.remove("active");
               $(`.song${[randomNumNext]}`).classList.add("active");
               // Lưu lại để xóa active các trường hợp tiếp theo
@@ -489,6 +543,10 @@
               $(`.song${[saveBeforeNext]}`).classList.remove("active");
               console.log(saveBeforeNext)
               console.log(saveRanPre)
+              if(randomNumNext !== storge1){
+                // Xóa active khi ấn nhiều lần next có random
+                $(`.song${[storge1]}`).classList.remove("active");
+              }
             }
           }
 
@@ -536,7 +594,7 @@
             }
           }
           
-          // Bấm random và next ở lúc đầu sau đấy tắt random va ấn next
+          // Bấm random và pre ở lúc đầu sau đấy tắt random va ấn pre
           else if(!_this.isRandom && storge2 !== undefined){
             // Check nếu số lớn hơn 9 sẽ k next đc tiếp
             if(storge2 > 1){
@@ -563,34 +621,10 @@
             }
           }
           
-          // Bam random va next ngay dau tien
+
+          // Bam random va Pre ngay dau tien
           else if(storageNum === undefined && _this.isRandom){
             count1 += 1
-            var randomNumNext2 = Math.floor(Math.random() * (9 - 2 + 1) + 2)
-            heading.textContent = `Song${randomNumNext2}`;
-            cdThumb.style.backgroundImage = `url('./img/img${randomNumNext2}.jpg')`
-            audio.src = `./music/song${randomNumNext2}.mp3`;
-            player.classList.add("playing")
-            audio.play();
-            cdThumbAnimate.play();
-            storge2 = randomNumNext2
-            if(count1 === 1){
-              console.log('ok2')
-              $(`.song${[count1]}`).classList.remove("active");
-              $(`.song${[randomNumNext2]}`).classList.add("active");
-              storge1 = randomNumNext2
-            }
-            else{
-              $(`.song${[storge1]}`).classList.remove("active");
-              $(`.song${[randomNumNext2]}`).classList.add("active");
-              storge1 = randomNumNext2
-            }
-          }
-
-          // Neu storageNum co duoc gán random ở phía dưới thì chạy if(tương đương bài hát đc random) và còn được bận random nx ấn pre sẽ random các bài hát
-          else if(storageNum !== undefined && _this.isRandom){
-            // Giảm biến pre giam 1
-            checkPreRan += 1
             var randomNumPre = Math.floor(Math.random() * (9 - 2 + 1) + 2)
             heading.textContent = `Song${randomNumPre}`;
             cdThumb.style.backgroundImage = `url('./img/img${randomNumPre}.jpg')`
@@ -598,34 +632,89 @@
             player.classList.add("playing")
             audio.play();
             cdThumbAnimate.play();
-            // Lưu nó lại vào storageNum(nếu trong trường hợp tắt random sẽ nhảy lên phía trên và pre khi không có random)
+            storge2 = randomNumPre
             storageNum = randomNumPre
-            // Check TH đầu tiên(bởi vì ở dưới lưu storgeRemove là giá trị cuối cùng đến cuối bài random nên nếu mà ấn pre thì sẽ xóa active ở biến storgeRemove đi)
+            if(count1 <= 1){
+              //Xóa khi lần đầu ấn Pre thường và sau đó ấn Pre random
+              $(`.song${[i]}`).classList.remove("active");
+              // Ấn random và Pre ở đầu sau đấy ấn tắt và Pre sau đó lại bật random và Pre ở random
+              $(`.song${[storageNum]}`).classList.remove("active");
+              // Xóa phần tử đầu tiên khi ngay lần đầu bấm random(ptu 1)
+              $(`.song${[count1]}`).classList.remove("active");
+              // 
+              $(`.song${[storge1]}`).classList.remove("active");
+              // Thêm active cho class tiếp theo
+              $(`.song${[randomNumPre]}`).classList.add("active");
+              console.log(randomNumPre)
+              storge1 = randomNumPre
+            }
+            else{
+              //Xóa khi lần đầu ấn Pre thường và sau đó ấn Pre random
+              $(`.song${[i]}`).classList.remove("active");
+              // Ấn random và Pre ở đầu sau đấy ấn tắt và Pre sau đó lại bật random và Pre ở random
+              $(`.song${[storageNum]}`).classList.remove("active");
+              // 
+              $(`.song${[saveBeforePre]}`).classList.remove("active");
+              // Xóa active hiện tại
+              $(`.song${[storge1]}`).classList.remove("active");
+              console.log(storge1)
+              // 
+              console.log(storge2)
+              $(`.song${[storge2]}`).classList.remove("active");
+              // Thêm số mới
+              $(`.song${[randomNumPre]}`).classList.add("active");
+              storge2 = randomNumPre
+            }
+          }
+
+          
+          // // Neu storageNum co duoc gán random ở phía dưới thì chạy if(tương đương bài hát đc random) và còn được bật random nx ấn Pre sẽ random các bài hát
+          else if(storageNum !== undefined && _this.isRandom){
+            // Cộng biến Pre lên 1
+            checkPreRan += 1
+            // 
+            var randomNumPre = Math.floor(Math.random() * (9 - 2 + 1) + 2)
+            heading.textContent = `Song${randomNumPre}`;
+            cdThumb.style.backgroundImage = `url('./img/img${randomNumPre}.jpg')`
+            audio.src = `./music/song${randomNumPre}.mp3`;
+            player.classList.add("playing")
+            audio.play();
+            cdThumbAnimate.play();
+            // Lưu nó lại vào storageNum(nếu trong trường hợp tắt random sẽ nhảy lên phía trên và Pre khi không có random)
+            storageNum = randomNumPre
+            
+            // Check TH đầu tiên(bởi vì ở dưới lưu storgeRemove là giá trị cuối cùng đến cuối bài random nên nếu mà ấn Pre thì sẽ xóa active ở biến storgeRemove đi)
             if(checkPreRan <= 1){
+              console.log('ok')
+              console.log(storgeRemove)
               $(`.song${[storgeRemove]}`).classList.remove("active");
               $(`.song${[randomNumPre]}`).classList.add("active");
               // Lưu lại để xóa active các trường hợp tiếp theo
               storagePreRan = randomNumPre
             }
-
             else{
-              // checkPreRan += 1
-              // Do pre đột ngột(bật random xong tắt) nên phải xóa 
-              console.log(storgeRemove)
+              // Do Pre đột ngột nên(bật random xong tắt) phải xóa 
               $(`.song${[storgeRemove]}`).classList.remove("active");
-              // Trong trường hợp ấn pre sau khi ấn next ở nút random
-              $(`.song${[saveRanPre]}`).classList.remove("active");
+              // Trong trường hợp ấn next sau khi ấn pre ở nút random
+              $(`.song${[saveRanNext]}`).classList.remove("active");
               $(`.song${[storagePreRan]}`).classList.remove("active");
               $(`.song${[randomNumPre]}`).classList.add("active");
               // Lưu lại để xóa active các trường hợp tiếp theo
               storagePreRan = randomNumPre
-              // Lưu giá trị randomNumPre vào biến saveRanNext sau mỗi lần ấn pre để sao lưu gtri sau khi ấn đột ngột next(còn xóa active)
+              // Lưu giá trị randomNumPre vào biến saveRanNext sau mỗi lần ấn pre để sao lưu gtri sau khi ấn đột ngội Next(còn xóa active)
               saveRanNext = randomNumPre
-              // Xóa Tạo active sau khi random tắt đi next và random lại 
+              // Xóa Tạo active sau khi random tắt đi Pre và random lại 
               $(`.song${[saveBeforePre]}`).classList.remove("active");
               console.log(saveBeforePre)
+              if(randomNumPre !== storge2){
+                // Xóa active khi ấn nhiều lần Pre có random
+                $(`.song${[storge2]}`).classList.remove("active");
+              }
             }
           }
+
+
+  
 
           // Neu không có storageNum co duoc gán random ở phía dưới thì chạy else if(tương đương bài hát k đc random) và không có cả đang bật random
           else if(i > 1) {
@@ -679,8 +768,7 @@
               checkRandom += 1
               // Dat 1 so random
               var randomNum1 = Math.floor(Math.random() * (9 - 2 + 1) + 2)
-              console.log(checkRan)
-              // Trong trường hợp không nhấn tắt random sau khi kết thúc bài nó sẽ gán lại storageNum cho randomNum1(tức là storageNum có giá trị của randomNum1) 
+              // Trong trường hợp random sau khi kết thúc bài nó sẽ gán lại storageNum cho randomNum1(tức là storageNum có giá trị của randomNum1) 
               // nếu nhấn tắt random thì sẽ lên trên (1)
               storageNum = randomNum1
               // Gan vao
@@ -692,11 +780,12 @@
               audio.play();
               cdThumbAnimate.play();
               // Check TH đầu tiên(bởi vì bắt đầu bật random thì active sẽ ở i nên xét TH này để xóa active ở i )
-              if (checkRandom === 1) {
+              if (checkRandom <= 1) {
                 $(`.song${[i]}`).classList.remove("active");
                 $(`.song${[randomNum1]}`).classList.add("active");
                 // Lưu lại để xóa active các trường hợp tiếp theo
                 storgeRemove = randomNum1
+                
               }
               else {
                 $(`.song${[storgeRemove]}`).classList.remove("active");
